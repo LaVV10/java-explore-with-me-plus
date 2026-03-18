@@ -1,70 +1,68 @@
 services:
-  ewm-db:
-    image: postgres:16.1
-    container_name: ewm-db
-    environment:
-      POSTGRES_DB: ewm_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5433:5432"
-    volumes:
-      - ewm_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-
-  stats-db:
-    image: postgres:16.1
-    container_name: stats-db
-    environment:
-      POSTGRES_DB: stats_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5434:5432"
-    volumes:
-      - stats_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-
-  ewm-service:
-    build:
-      context: ./main-service
-      dockerfile: Dockerfile
-    container_name: ewm-service
-    depends_on:
-      - ewm-db
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/ewm_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-    networks:
-      - app-network
-    restart: unless-stopped
-
   stats-server:
-    build:
-      context: ./stats-service/stats-service-server
-      dockerfile: Dockerfile
-    container_name: stats-server
+    restart: on-failure
+    build: ./stats-service/stats-service-server
+    image: stats-server-image
+    container_name: ewm-stats-server
     depends_on:
-      - stats-db
+      stats-db:
+        condition: service_healthy
     ports:
       - "9090:9090"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://stats-db:5432/stats_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-    networks:
-      - app-network
-    restart: unless-stopped
+      - DB_NAME=stats
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - DB_HOST=stats-db
+      - DB_PORT=5432
+      - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  stats-db:
+    image: postgres:15.1-alpine
+    container_name: EWM-stats-db
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=stats
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - stats-db-data:/var/lib/postgresql/data
+
+  ewm-db:
+    image: postgres:15.1-alpine
+    container_name: EWM-server-db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=ewm-server
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ewm-db-data:/var/lib/postgresql/data
+
+  ewm-service:
+    image: alpine:latest
+    command: sleep infinity
+    container_name: ewm-service
+    depends_on:
+      - ewm-db
 
 volumes:
-  ewm_data:
-  stats_data:
-
-networks:
-  app-network:
-    driver: bridge
+  stats-db-data:
+  ewm-db-data:
