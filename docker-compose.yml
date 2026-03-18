@@ -1,19 +1,19 @@
 version: '3.8'
 
 services:
-#  ewm-db:
-#    image: postgres:16.1
-#   container_name: ewm-db
-#   environment:
-#     POSTGRES_DB: ewm_db
-#     POSTGRES_USER: postgres
-#    POSTGRES_PASSWORD: postgres
-#   ports:
-#     - "5433:5432"
-#   volumes:
-#     - ewm_data:/var/lib/postgresql/data
-#   networks:
-#    - app-network
+  ewm-db:
+    image: postgres:16.1
+    container_name: ewm-db
+    environment:
+      POSTGRES_DB: ewm_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ewm_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
   stats-db:
     image: postgres:16.1
@@ -29,22 +29,22 @@ services:
     networks:
       - app-network
 
-#  ewm-service:
-#    build:
-#      context: ./main-service
-#      dockerfile: Dockerfile
-#    container_name: ewm-service
-#    depends_on:
-#      - ewm-db
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/ewm_db
-#      SPRING_DATASOURCE_USERNAME: postgres
-#      SPRING_DATASOURCE_PASSWORD: postgres
-#    networks:
-#      - app-network
-#    restart: unless-stopped
+  ewm-service:
+    build:
+      context: ./main-service
+      dockerfile: Dockerfile
+    container_name: ewm-service
+    depends_on:
+      - ewm-db
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/ewm_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - app-network
+    restart: unless-stopped
 
   stats-server:
     build:
@@ -64,7 +64,7 @@ services:
     restart: unless-stopped
 
 volumes:
-#  ewm_data:
+  ewm_data:
   stats_data:
 
 networks:
