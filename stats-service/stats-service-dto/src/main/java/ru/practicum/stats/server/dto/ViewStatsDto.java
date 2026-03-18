@@ -1,3 +1,5 @@
+package ru.practicum.stats.server.dto;
+
 import lombok.*;
 
 @Getter

@@ -1,3 +1,5 @@
+package ru.practicum.stats.server;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
