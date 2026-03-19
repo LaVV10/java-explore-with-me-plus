@@ -1,7 +1,7 @@
 services:
   stats-server:
     restart: on-failure
-    build: ./stats-service/stats-server
+    build: ./ewm-stats/stats-server
     image: stats-server-image
     container_name: ewm-stats-server
     depends_on:
