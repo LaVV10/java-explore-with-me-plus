@@ -57,11 +57,10 @@ services:
       - ewm-db-data:/var/lib/postgresql/data
 
   ewm-service:
-    image: alpine:latest
-    command: sleep infinity
+    image: nginx:alpine
     container_name: ewm-service
-    depends_on:
-      - ewm-db
+    ports:
+      - "8080:80"
 
 volumes:
   stats-db-data:
