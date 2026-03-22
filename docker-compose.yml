@@ -1,3 +1,5 @@
+
+
 services:
   stats-server:
     restart: on-failure
@@ -60,7 +62,9 @@ services:
     image: nginx:alpine
     container_name: ewm-service
     ports:
-      - "8080:80"
+      - "8080:8080"
+    command: >
+      sh -c "sed -i 's/80/8080/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
 volumes:
   stats-db-data:
