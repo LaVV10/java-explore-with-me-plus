@@ -148,4 +148,11 @@ public class ErrorHandler {
     public ErrorResponse handleCategoryNotEmptyException(final CategoryNotEmptyException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleLocationNotExistException(final LocationNotExistException exception) {
+        return new ErrorResponse(exception.getMessage());
+    }
 }

@@ -15,6 +15,12 @@ public interface EventService {
 
     EventFullDto updateEvent(Long eventId, UpdateEventAdminDto updateEventAdminDto);
 
+    EventFullDto publishEvent(Long eventId);
+
+    EventFullDto rejectEvent(Long eventId);
+
+    List<EventFullDto> getPendingEvents(Integer from, Integer size);
+
     EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserDto updateEventUserDto);
 
     EventFullDto getEventByUser(Long userId, Long eventId);
