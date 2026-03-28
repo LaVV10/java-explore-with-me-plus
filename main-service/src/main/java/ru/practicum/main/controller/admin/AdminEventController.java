@@ -15,6 +15,7 @@ import ru.practicum.main.service.EventService;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/admin/events")
 @RequiredArgsConstructor
@@ -27,6 +28,22 @@ public class AdminEventController {
                                     @RequestBody @Valid UpdateEventAdminDto updateEventAdminDto) {
         return eventService.updateEvent(eventId, updateEventAdminDto);
 
+    }
+
+    @PatchMapping("/{eventId}/publish")
+    public EventFullDto publishEvent(@PathVariable Long eventId) {
+        return eventService.publishEvent(eventId);
+    }
+
+    @PatchMapping("/{eventId}/reject")
+    public EventFullDto rejectEvent(@PathVariable Long eventId) {
+        return eventService.rejectEvent(eventId);
+    }
+
+    @GetMapping("/pending")
+    public List<EventFullDto> getPendingEvents(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                               @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero Integer size) {
+        return eventService.getPendingEvents(from, size);
     }
 
     @GetMapping
