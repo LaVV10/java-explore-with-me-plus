@@ -1,9 +1,10 @@
 {
   "info": {
-    "_postman_id": "8f2b7ef1-4e5c-48c9-b8e5-71a5cc4d1abc",
-    "name": "Explore With Me - feature",
+    "_postman_id": "ewm-full-merged",
+    "name": "Explore With Me - FULL FEATURE (merged)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+
   "event": [
     {
       "listen": "prerequest",
@@ -11,29 +12,24 @@
         "type": "text/javascript",
         "exec": [
           "const now = new Date();",
-          "const publishedDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);",
-          "const rejectedDate = new Date(now.getTime() + 4 * 60 * 60 * 1000);",
-          "const updateDate = new Date(now.getTime() + 5 * 60 * 60 * 1000);",
-          "function pad(value) { return String(value).padStart(2, '0'); }",
-          "function format(date) {",
-          "  return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());",
-          "}",
-          "pm.collectionVariables.set('futureEventDate', format(publishedDate));",
-          "pm.collectionVariables.set('futureRejectedEventDate', format(rejectedDate));",
-          "pm.collectionVariables.set('futureUpdatedEventDate', format(updateDate));"
+          "function pad(v){return String(v).padStart(2,'0');}",
+          "function fmt(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());}",
+          "pm.collectionVariables.set('futureEventDate', fmt(new Date(now.getTime()+3*3600000)));",
+          "pm.collectionVariables.set('futureRejectedEventDate', fmt(new Date(now.getTime()+4*3600000)));",
+          "pm.collectionVariables.set('futureUpdatedEventDate', fmt(new Date(now.getTime()+5*3600000)));"
         ]
       }
     }
   ],
+
   "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:8080"
-    }
+    { "key": "baseUrl", "value": "http://localhost:8080" }
   ],
+
   "item": [
+
     {
-      "name": "location_processing",
+      "name": "01 - LOCATION MODULE",
       "item": [
         {
           "name": "Create admin user",
@@ -41,9 +37,8 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('201 created', ()=>pm.response.to.have.status(201));",
                   "pm.collectionVariables.set('adminUserId', pm.response.json().id);"
                 ]
               }
@@ -51,9 +46,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{"key":"Content-Type","value":"application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Location Admin\",\n  \"email\": \"location-admin@example.com\"\n}"
@@ -61,19 +54,19 @@
             "url": {
               "raw": "{{baseUrl}}/admin/users",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "users"]
+              "path": ["admin","users"]
             }
           }
         },
+
         {
           "name": "Create location",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('201 created', ()=>pm.response.to.have.status(201));",
                   "pm.collectionVariables.set('locationId', pm.response.json().id);"
                 ]
               }
@@ -81,9 +74,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{"key":"Content-Type","value":"application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"lat\": 56.9496,\n  \"lon\": 24.1052\n}"
@@ -91,19 +82,19 @@
             "url": {
               "raw": "{{baseUrl}}/admin/locations",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations"]
+              "path": ["admin","locations"]
             }
           }
         },
+
         {
           "name": "Get locations",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });"
+                  "pm.test('200 ok', ()=>pm.response.to.have.status(200));"
                 ]
               }
             }
@@ -113,23 +104,23 @@
             "url": {
               "raw": "{{baseUrl}}/admin/locations?from=0&size=10",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations"],
+              "path": ["admin","locations"],
               "query": [
-                { "key": "from", "value": "0" },
-                { "key": "size", "value": "10" }
+                {"key":"from","value":"0"},
+                {"key":"size","value":"10"}
               ]
             }
           }
         },
+
         {
           "name": "Get location by id",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });"
+                  "pm.test('200 ok', ()=>pm.response.to.have.status(200));"
                 ]
               }
             }
@@ -139,28 +130,26 @@
             "url": {
               "raw": "{{baseUrl}}/admin/locations/{{locationId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations", "{{locationId}}"]
+              "path": ["admin","locations","{{locationId}}"]
             }
           }
         },
+
         {
           "name": "Update location",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });"
+                  "pm.test('200 ok', ()=>pm.response.to.have.status(200));"
                 ]
               }
             }
           ],
           "request": {
             "method": "PATCH",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{"key":"Content-Type","value":"application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"lat\": 59.4370,\n  \"lon\": 24.7536\n}"
@@ -168,88 +157,15 @@
             "url": {
               "raw": "{{baseUrl}}/admin/locations/{{locationId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations", "{{locationId}}"]
-            }
-          }
-        },
-        {
-          "name": "Create temporary location for delete",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
-                  "pm.collectionVariables.set('tempLocationId', pm.response.json().id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"lat\": 54.6872,\n  \"lon\": 25.2797\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/admin/locations",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations"]
-            }
-          }
-        },
-        {
-          "name": "Delete temporary location",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status code is 204', function () { pm.response.to.have.status(204); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "url": {
-              "raw": "{{baseUrl}}/admin/locations/{{tempLocationId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations", "{{tempLocationId}}"]
-            }
-          }
-        },
-        {
-          "name": "Get deleted location should return 404",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/admin/locations/{{tempLocationId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "locations", "{{tempLocationId}}"]
+              "path": ["admin","locations","{{locationId}}"]
             }
           }
         }
       ]
     },
+
     {
-      "name": "moderation_enhancement",
+      "name": "02 - MODERATION MODULE",
       "item": [
         {
           "name": "Create category",
@@ -257,9 +173,8 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('201 created', ()=>pm.response.to.have.status(201));",
                   "pm.collectionVariables.set('categoryId', pm.response.json().id);"
                 ]
               }
@@ -267,9 +182,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{"key":"Content-Type","value":"application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Moderation feature category\"\n}"
@@ -277,19 +190,19 @@
             "url": {
               "raw": "{{baseUrl}}/admin/categories",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "categories"]
+              "path": ["admin","categories"]
             }
           }
         },
+
         {
-          "name": "Create event initiator",
+          "name": "Create event owner",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('201 created', ()=>pm.response.to.have.status(201));",
                   "pm.collectionVariables.set('eventOwnerId', pm.response.json().id);"
                 ]
               }
@@ -297,9 +210,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{"key":"Content-Type","value":"application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Event Owner\",\n  \"email\": \"event-owner@example.com\"\n}"
@@ -307,19 +218,19 @@
             "url": {
               "raw": "{{baseUrl}}/admin/users",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "users"]
+              "path": ["admin","users"]
             }
           }
         },
+
         {
-          "name": "Create event for publish",
+          "name": "Create event (publish)",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('201 created', ()=>pm.response.to.have.status(201));",
                   "pm.collectionVariables.set('eventId', pm.response.json().id);"
                 ]
               }
@@ -327,55 +238,27 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{"key":"Content-Type","value":"application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"annotation\": \"This annotation is definitely longer than twenty characters.\",\n  \"category\": {{categoryId}},\n  \"description\": \"This event description is intentionally long enough to satisfy validation rules for moderation testing.\",\n  \"eventDate\": \"{{futureEventDate}}\",\n  \"location\": {\n    \"lat\": 59.4370,\n    \"lon\": 24.7536\n  },\n  \"paid\": false,\n  \"participantLimit\": 10,\n  \"requestModeration\": true,\n  \"title\": \"Publish moderation event\"\n}"
+              "raw": "{\n  \"annotation\": \"This annotation is definitely longer than twenty characters.\",\n  \"category\": {{categoryId}},\n  \"description\": \"Moderation event description long enough.\",\n  \"eventDate\": \"{{futureEventDate}}\",\n  \"location\": {\"lat\": 59.4370, \"lon\": 24.7536},\n  \"paid\": false,\n  \"participantLimit\": 10,\n  \"requestModeration\": true,\n  \"title\": \"Publish event\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/users/{{eventOwnerId}}/events",
               "host": ["{{baseUrl}}"],
-              "path": ["users", "{{eventOwnerId}}", "events"]
+              "path": ["users","{{eventOwnerId}}","events"]
             }
           }
         },
-        {
-          "name": "Get pending events",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/admin/events/pending?from=0&size=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["admin", "events", "pending"],
-              "query": [
-                { "key": "from", "value": "0" },
-                { "key": "size", "value": "10" }
-              ]
-            }
-          }
-        },
+
         {
           "name": "Publish event",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });"
+                  "pm.test('200 ok', ()=>pm.response.to.have.status(200));"
                 ]
               }
             }
@@ -385,81 +268,120 @@
             "url": {
               "raw": "{{baseUrl}}/admin/events/{{eventId}}/publish",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "events", "{{eventId}}", "publish"]
+              "path": ["admin","events","{{eventId}}","publish"]
             }
           }
-        },
+        }
+      ]
+    },
+
+    {
+      "name": "03 - COMMENTS MODULE (FULL)",
+      "item": [
         {
-          "name": "Create event for reject",
+          "name": "Create comment (user 1)",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
-                  "pm.collectionVariables.set('rejectedEventId', pm.response.json().id);"
+                  "pm.test('201 created', ()=>pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('commentId', pm.response.json().id);"
                 ]
               }
             }
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{"key":"Content-Type","value":"application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"annotation\": \"Second annotation is also comfortably longer than twenty characters.\",\n  \"category\": {{categoryId}},\n  \"description\": \"This second event exists only to verify that the administrator can reject pending events.\",\n  \"eventDate\": \"{{futureRejectedEventDate}}\",\n  \"location\": {\n    \"lat\": 56.9496,\n    \"lon\": 24.1052\n  },\n  \"paid\": true,\n  \"participantLimit\": 5,\n  \"requestModeration\": true,\n  \"title\": \"Reject moderation event\"\n}"
+              "raw": "{\n  \"text\": \"First comment\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/users/{{eventOwnerId}}/events",
+              "raw": "{{baseUrl}}/users/{{eventOwnerId}}/events/{{eventId}}/comments",
               "host": ["{{baseUrl}}"],
-              "path": ["users", "{{eventOwnerId}}", "events"]
+              "path": ["users","{{eventOwnerId}}","events","{{eventId}}","comments"]
             }
           }
         },
+
         {
-          "name": "Reject event",
+          "name": "Create comment (user 2)",
+          "request": {
+            "method": "POST",
+            "header": [{"key":"Content-Type","value":"application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Second comment\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{adminUserId}}/events/{{eventId}}/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["users","{{adminUserId}}","events","{{eventId}}","comments"]
+            }
+          }
+        },
+
+        {
+          "name": "Get comments by event",
           "event": [
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });"
+                  "pm.test('200 ok', ()=>pm.response.to.have.status(200));"
                 ]
               }
             }
           ],
           "request": {
-            "method": "PATCH",
+            "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/admin/events/{{rejectedEventId}}/reject",
+              "raw": "{{baseUrl}}/events/{{eventId}}/comments",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "events", "{{rejectedEventId}}", "reject"]
+              "path": ["events","{{eventId}}","comments"]
             }
           }
         },
+
         {
-          "name": "Reject published event should return 409",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status code is 409', function () { pm.response.to.have.status(409); });"
-                ]
-              }
+          "name": "Get my comments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{eventOwnerId}}/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["users","{{eventOwnerId}}","comments"]
             }
-          ],
+          }
+        },
+
+        {
+          "name": "Update comment",
           "request": {
             "method": "PATCH",
+            "header": [{"key":"Content-Type","value":"application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Updated comment\"\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/admin/events/{{eventId}}/reject",
+              "raw": "{{baseUrl}}/users/{{eventOwnerId}}/comments/{{commentId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["admin", "events", "{{eventId}}", "reject"]
+              "path": ["users","{{eventOwnerId}}","comments","{{commentId}}"]
+            }
+          }
+        },
+
+        {
+          "name": "Delete comment",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{eventOwnerId}}/comments/{{commentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users","{{eventOwnerId}}","comments","{{commentId}}"]
             }
           }
         }
