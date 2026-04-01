@@ -1,7 +1,7 @@
 {
   "info": {
-    "_postman_id": "b7c1c2a1-9f3d-4a55-9c11-222222222222",
-    "name": "EWM - Comments Feature (Fixed)",
+    "name": "Main API",
+    "_postman_id": "b7c1d2a1-1111-2222-3333-abcdefabcdef",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -10,224 +10,243 @@
       "value": "http://localhost:8080"
     },
     {
-      "key": "eventOwnerId",
-      "value": ""
+      "key": "userId",
+      "value": "1"
     },
     {
       "key": "eventId",
-      "value": ""
+      "value": "1"
     },
     {
       "key": "commentId",
-      "value": ""
+      "value": "1"
     }
   ],
   "item": [
     {
-      "name": "Create event owner",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Comment Owner\",\n  \"email\": \"comment-owner@example.com\"\n}"
+      "name": "Public Events",
+      "item": [
+        {
+          "name": "Get Events",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/events"
+          }
         },
-        "url": {
-          "raw": "{{baseUrl}}/admin/users",
-          "host": ["{{baseUrl}}"],
-          "path": ["admin", "users"]
-        }
-      },
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('201 created', () => pm.response.to.have.status(201));",
-              "pm.collectionVariables.set('eventOwnerId', pm.response.json().id);"
-            ]
+          "name": "Get Event By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/events/{{eventId}}"
           }
         }
       ]
     },
-
     {
-      "name": "Create event for comments",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"annotation\": \"Annotation for comments feature test\",\n  \"category\": 1,\n  \"description\": \"Description for comments feature test\",\n  \"eventDate\": \"2099-01-01 10:00:00\",\n  \"location\": { \"lat\": 59.9, \"lon\": 30.3 },\n  \"paid\": false,\n  \"participantLimit\": 10,\n  \"requestModeration\": false,\n  \"title\": \"Comments Test Event\"\n}"
+      "name": "Private Events",
+      "item": [
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test event\",\n  \"description\": \"desc\"\n}"
+            },
+            "url": "{{baseUrl}}/users/{{userId}}/events"
+          }
         },
-        "url": {
-          "raw": "{{baseUrl}}/users/{{eventOwnerId}}/events",
-          "host": ["{{baseUrl}}"],
-          "path": ["users", "{{eventOwnerId}}", "events"]
-        }
-      },
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('201 created', () => pm.response.to.have.status(201));",
-              "pm.collectionVariables.set('eventId', pm.response.json().id);"
-            ]
+          "name": "Get User Events",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/{{userId}}/events"
           }
-        }
-      ]
-    },
-
-    {
-      "name": "Create comment (valid)",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"text\": \"This is a valid comment\"\n}"
         },
-        "url": {
-          "raw": "{{baseUrl}}/events/{{eventId}}/comments",
-          "host": ["{{baseUrl}}"],
-          "path": ["events", "{{eventId}}", "comments"]
-        }
-      },
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('Status code is 201', () => pm.response.to.have.status(201));",
-              "const json = pm.response.json();",
-              "pm.expect(json.id).to.exist;",
-              "pm.expect(json.text).to.eql('This is a valid comment');",
-              "pm.collectionVariables.set('commentId', json.id);"
-            ]
+          "name": "Get User Event By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}"
           }
-        }
-      ]
-    },
-
-    {
-      "name": "Get comments by eventId",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/events/{{eventId}}/comments",
-          "host": ["{{baseUrl}}"],
-          "path": ["events", "{{eventId}}", "comments"]
-        }
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
-              "pm.expect(pm.response.json()).to.be.an('array');"
-            ]
-          }
-        }
-      ]
-    },
-
-    {
-      "name": "Get comment by id",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/events/{{eventId}}/comments/{{commentId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["events", "{{eventId}}", "comments", "{{commentId}}"]
-        }
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
-              "pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get('commentId'));"
-            ]
-          }
-        }
-      ]
-    },
-
-    {
-      "name": "Update comment",
-      "request": {
-        "method": "PATCH",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"text\": \"Updated comment text\"\n}"
         },
-        "url": {
-          "raw": "{{baseUrl}}/events/{{eventId}}/comments/{{commentId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["events", "{{eventId}}", "comments", "{{commentId}}"]
-        }
-      },
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
-              "pm.expect(pm.response.json().text).to.eql('Updated comment text');"
-            ]
+          "name": "Update Event By User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"updated\"\n}"
+            },
+            "url": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}"
           }
-        }
-      ]
-    },
-
-    {
-      "name": "Delete comment",
-      "request": {
-        "method": "DELETE",
-        "url": {
-          "raw": "{{baseUrl}}/events/{{eventId}}/comments/{{commentId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["events", "{{eventId}}", "comments", "{{commentId}}"]
-        }
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('Status code is 200 or 204', () => pm.expect([200,204]).to.include(pm.response.code));"
-            ]
-          }
-        }
-      ]
-    },
-
-    {
-      "name": "Negative - empty comment",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"text\": \"\"\n}"
         },
-        "url": {
-          "raw": "{{baseUrl}}/events/{{eventId}}/comments",
-          "host": ["{{baseUrl}}"],
-          "path": ["events", "{{eventId}}", "comments"]
-        }
-      },
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('400 or 422', () => pm.expect([400,422]).to.include(pm.response.code));"
-            ]
+          "name": "Get Event Requests",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/requests"
+          }
+        },
+        {
+          "name": "Update Requests",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+            },
+            "url": "{{baseUrl}}/users/{{userId}}/events/{{eventId}}/requests"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments (PRIVATE)",
+      "item": [
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"my comment\"\n}"
+            },
+            "url": "{{baseUrl}}/users/{{userId}}/comments/{{eventId}}"
+          }
+        },
+        {
+          "name": "Get User Comments",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/{{userId}}/comments?from=0&size=10"
+          }
+        },
+        {
+          "name": "Get Comment By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/{{userId}}/comments/{{commentId}}"
+          }
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"updated comment\"\n}"
+            },
+            "url": "{{baseUrl}}/users/{{userId}}/comments/{{commentId}}"
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/users/{{userId}}/comments/{{commentId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments (ADMIN)",
+      "item": [
+        {
+          "name": "Get Comments By Event",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/comments?eventId={{eventId}}"
+          }
+        },
+        {
+          "name": "Get Comment By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/comments/{{commentId}}"
+          }
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"admin update\"\n}"
+            },
+            "url": "{{baseUrl}}/admin/comments/{{commentId}}"
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/admin/comments/{{commentId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Events",
+      "item": [
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"admin update\"\n}"
+            },
+            "url": "{{baseUrl}}/admin/events/{{eventId}}"
+          }
+        },
+        {
+          "name": "Publish Event",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/admin/events/{{eventId}}/publish"
+          }
+        },
+        {
+          "name": "Reject Event",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/admin/events/{{eventId}}/reject"
+          }
+        },
+        {
+          "name": "Get Pending Events",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/events/pending?from=0&size=10"
+          }
+        },
+        {
+          "name": "Get Events (Admin Filter)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/events"
           }
         }
       ]
