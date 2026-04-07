@@ -114,6 +114,27 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
+    public EventFullDto publishEvent(Long eventId) {
+        UpdateEventAdminDto dto = new UpdateEventAdminDto();
+        dto.setStateAction(StateActionForAdmin.PUBLISH_EVENT);
+        return updateEvent(eventId, dto);
+    }
+
+    @Override
+    @Transactional
+    public EventFullDto rejectEvent(Long eventId) {
+        UpdateEventAdminDto dto = new UpdateEventAdminDto();
+        dto.setStateAction(StateActionForAdmin.REJECT_EVENT);
+        return updateEvent(eventId, dto);
+    }
+
+    @Override
+    public List<EventFullDto> getPendingEvents(Integer from, Integer size) {
+        return getEventsWithParamsByAdmin(null, EventState.PENDING, null, null, null, from, size);
+    }
+
+    @Override
+    @Transactional
     public EventFullDto updateEventByUser(Long userId,
                                           Long eventId,
                                           UpdateEventUserDto dto) {
